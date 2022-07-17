@@ -22,7 +22,7 @@ db_drop_and_create_all()
 # ROUTES
 
 @app.route('/drinks')
-# @requires_auth()
+@requires_auth('get:drinks')
 def drinks():
     """
         A function that gets all the avialble drinks 
@@ -53,7 +53,7 @@ def drinks():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks-detail')
-# @requires_auth()
+@requires_auth('get:drinks-detail')
 def drinks():
     """
         An endpoint to GET drink in detail.
