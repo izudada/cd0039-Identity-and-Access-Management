@@ -44,14 +44,6 @@ def drinks():
         abort(400)
 
 
-'''
-@TODO implement endpoint
-    GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
 @app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
 def drinks():
@@ -84,6 +76,28 @@ def drinks():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def drinks():
+    """
+        A function to create a new drink 
+    """
+    try:
+        body = request.get_json()
+        title = body.get("title", None)
+        recipe = body.get("recipe", None)
+
+        new_drink = Drink(title=title, recipe=recipe)
+        new_drink.insert()
+        drink = new_drink.long()
+
+        return jsonify({
+                    'success': True,
+                    "drinks": drink
+                })
+    except Exception as e:
+        abort(400)
 
 
 '''
