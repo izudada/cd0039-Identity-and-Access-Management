@@ -67,16 +67,6 @@ def drinks():
         abort(400)
 
 
-'''
-@TODO implement endpoint
-    POST /drinks
-        it should create a new row in the drinks table
-        it should require the 'post:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
-        or appropriate status code indicating reason for failure
-'''
-
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def drinks():
@@ -112,6 +102,32 @@ def drinks():
         or appropriate status code indicating reason for failure
 '''
 
+@app.route('/drinks/<int:id>', methods=['PATCH'])
+@requires_auth('patch:drinks')
+def drinks():
+    try:
+        body = request.get_json()
+        title = body.get("title", None)
+        recipe = body.get("recipe", None)
+
+        drink = Drink.query.get(id)
+
+        if title:
+            drink.title = title
+        if recipe:
+            drink.recipe = recipe
+
+        drink.update()
+
+        drink = drink.long()
+        return jsonify(
+                    {
+                        "success": True, 
+                        "drinks": drink
+                    } 
+                )
+    except Exception as e:
+        abort(400)
 
 '''
 @TODO implement endpoint
