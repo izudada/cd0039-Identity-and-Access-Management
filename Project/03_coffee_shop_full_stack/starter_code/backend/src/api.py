@@ -46,7 +46,7 @@ def drinks():
 
 @app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
-def drinks():
+def drinks_details():
     """
         An endpoint to GET drink in detail.
     """
@@ -69,7 +69,7 @@ def drinks():
 
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
-def drinks():
+def add_drinks():
     """
         A function to create a new drink 
     """
@@ -90,21 +90,9 @@ def drinks():
         abort(400)
 
 
-'''
-@TODO implement endpoint
-    PATCH /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should update the corresponding row for <id>
-        it should require the 'patch:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
-        or appropriate status code indicating reason for failure
-'''
-
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
-def drinks():
+def edit_drinks(id):
     try:
         body = request.get_json()
         title = body.get("title", None)
@@ -139,6 +127,23 @@ def drinks():
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+
+@app.route('/drinks/<int:id>', methods=['DELETE'])
+@requires_auth('delete:drinks')
+def remove_drinks(id):
+    try:
+
+        drink = Drink.query.get(id)
+
+        drink.delete()
+        return jsonify(
+                    {
+                        "success": True, 
+                       "delete": id
+                    } 
+                )
+    except Exception as e:
+        abort(400)
 
 
 # Error Handling
